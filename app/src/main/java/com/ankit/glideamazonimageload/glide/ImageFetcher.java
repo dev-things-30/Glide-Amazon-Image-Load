@@ -8,6 +8,7 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.ankit.glideamazonimageload.AmazonClient;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.data.DataFetcher;
 
 import java.io.File;
@@ -31,17 +32,12 @@ public class ImageFetcher implements DataFetcher<InputStream> {
         this.imageModel = imageModel;
     }
 
-    @Override
-    public InputStream loadData(Priority priority) throws Exception {
-        return fetchStream(imageModel);
-    }
-
     private InputStream fetchStream(final ImageModel imageModel) {
         TransferUtility transferUtility = AmazonClient.getClient().getTransferUtility();
-        TransferObserver bolomessages = transferUtility.download(imageModel.getBucketName(), imageModel.getId(), new File(imageModel.getLocalPath()));
-        transferId = bolomessages.getId();
+        TransferObserver transferObserver = transferUtility.download(imageModel.getBucketName(), imageModel.getId(), new File(imageModel.getLocalPath()));
+        transferId = transferObserver.getId();
 
-        bolomessages.setTransferListener(new TransferListener() {
+        transferObserver.setTransferListener(new TransferListener() {
 
             @Override
             public void onStateChanged(int id, TransferState state) {
@@ -77,6 +73,11 @@ public class ImageFetcher implements DataFetcher<InputStream> {
     }
 
     @Override
+    public void loadData(Priority priority, DataCallback<? super InputStream> callback) {
+        callback.onDataReady(fetchStream(imageModel));
+    }
+
+    @Override
     public void cleanup() {
         if (mInputStream != null) {
             try {
@@ -89,13 +90,23 @@ public class ImageFetcher implements DataFetcher<InputStream> {
         }
     }
 
-    @Override
-    public String getId() {
-        return imageModel.getId();
-    }
+//    @Override
+//    public String getId() {
+//        return imageModel.getId();
+//    }
 
     @Override
     public void cancel() {
         AmazonClient.getClient().getTransferUtility().cancel(transferId);
+    }
+
+    @Override
+    public Class<InputStream> getDataClass() {
+        return InputStream.class;
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return DataSource.REMOTE;
     }
 }

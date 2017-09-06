@@ -1,5 +1,9 @@
 package com.ankit.glideamazonimageload.glide;
 
+import com.bumptech.glide.load.Key;
+
+import java.security.MessageDigest;
+
 /**
  * Created by ankit on 26-08-2017.
  */
@@ -10,9 +14,7 @@ public class ImageModel {
     String localPath;
     String bucketName;
 
-    public ImageModel(String id) {
-        this.id = id;
-    }
+    public ImageModel() {}
 
     @Override
     public boolean equals(Object o) {

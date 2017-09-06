@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import com.ankit.glideamazonimageload.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import static com.ankit.glideamazonimageload.Constants.BUCKET_NAME;
 import static com.ankit.glideamazonimageload.Constants.PHOTO_TEMP_PATH;
@@ -24,15 +25,16 @@ public class DisplayImage {
 
     public void displayImageForUser (Context context, ImageView imageView, String uniqueId) {
 
-        ImageModel imageModel = new ImageModel(uniqueId);
+        ImageModel imageModel = new ImageModel();
+        imageModel.setId(uniqueId);
         imageModel.setLocalPath(PHOTO_TEMP_PATH);
         imageModel.setBucketName(BUCKET_NAME);
 
         Glide.with(context)
-                .from(ImageModel.class)
-                .fitCenter().crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.mipmap.ic_launcher)
+                .setDefaultRequestOptions(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .placeholder(R.mipmap.ic_launcher)
+                        .fitCenter())
                 .load(imageModel)
                 .into(imageView);
     }

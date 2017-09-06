@@ -30,6 +30,10 @@
             android:name="com.ankit.glideamazonimageload.glide.CustomGlideModule"
             android:value="GlideModule" />
 
+        <meta-data
+            android:name="com.ankit.glideamazonimageload.glide.CustomLibraryGlideModule"
+            android:value="LibraryGlideModule" />
+
     </application>
 
 </manifest>
